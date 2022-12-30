@@ -1,0 +1,42 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: slategray;
+}
+
+.main-container {
+    height: min-content;
+    border: 3px solid black;
+}
+
+.display {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 5px;
+    height: 115px;
+    background-color: azure;
+    font-size: 30px;
+}
+
+.btn-container {
+    display: flex;
+    border-top: 3px solid black;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    width: 100px;
+    height: 100px;
+    background-color: azure;
+    border: 1px solid black;
+    font-size: 20px;
+}
