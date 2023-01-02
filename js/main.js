@@ -1,34 +1,45 @@
 const btns = document.querySelectorAll("button");
-const numBtns = document.querySelectorAll(".num");
-const operatorBtns = document.querySelectorAll(".operator");
 const inputsArray = [];
 
 function operate(){
     btns.forEach(btn => btn.addEventListener("click", () => {
-        inputsArray.push(btn.textContent);
+        inputsArray.push((btn.textContent));
 
-        let operends = inputsArray.join("").split(/[=x+/-]/).map(item => 
-            parseInt(item));
+        const operendsArray = inputsArray.join("").split(/[=x+/-]/).map(input => 
+            parseInt(input));
+        operendsArray.forEach(operend => {
+            if (isNaN(operend))operendsArray.pop();
+        })
 
-        let operatorArray = inputsArray.filter(input => 
-            ["+","-","x","/", "="].includes(input));
-        let operator = secondLastIndex(operatorArray);
+        const operatorArray = inputsArray.filter(input => 
+            ["+","-","x","/","="].includes(input));
 
-        if (isNaN(operends[2]) && operends.length == 3){
-            if (operator == "+"){
-                let total = addNums(operends[0], operends[1]);
-            } else if (operator == "-"){
-                let total = subtractNums(operends[0], operends[1]);
-            } else if (operator == "x"){
-                let total = multiplyNums(operends[0], operends[1]);
-            } else if (operator == "/"){
-                let total = divideNums(operends[0], operends[1]);
+        if (operendsArray.length == 2 && operatorArray.length == 2){ 
+            if (operatorArray[0] == "+"){
+                let total = addNums(operendsArray[0], operendsArray[1]);
+                resetArrays(inputsArray, operatorArray, total);
+            } else if (operatorArray[0] == "-"){
+                let total = subtractNums(operendsArray[0], operendsArray[1]);
+                resetArrays(inputsArray, operatorArray, total);
+            } else if (operatorArray[0] == "x"){
+                let total = multiplyNums(operendsArray[0], operendsArray[1]);
+                resetArrays(inputsArray, operatorArray, total);
+            } else if (operatorArray[0] == "/"){
+                let total = divideNums(operendsArray[0], operendsArray[1]);
+                resetArrays(inputsArray, operatorArray, total);
             }
         }
     }))
 }
 
+operate();
+
 // Helper functions
+function resetArrays(array1, array2, total){
+    array1.splice(0, array1.length);
+    array2[1] == "=" ? array1.push(total) : array1.push(total, array2[1]);
+}
+
 function addNums(x,y){
     return x + y;
 }
@@ -43,10 +54,4 @@ function divideNums(x,y){
 
 function multiplyNums(x,y){
     return x * y;
-}
-
-function secondLastIndex(array){
-    let Index = array.length - 2;
-    let element = array[Index];
-    return element;
 }
