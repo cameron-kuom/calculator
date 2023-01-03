@@ -1,41 +1,67 @@
 const btns = document.querySelectorAll("button");
 const display = document.querySelector(".display");
 const inputsArray = [];
+let errorCheck = false;
 
 function calcInputs(){
+    btns[3].addEventListener("click", () => {
+        inputsArray.splice(0, inputsArray.length);
+        errorCheck = false;
+    })
+    
     btns.forEach(btn => btn.addEventListener("click", () => {
-        inputsArray.push(btn.textContent);
-        display.textContent = inputsArray.join(" ");
-
-        const fullArray = inputsArray.join("").split(/([=x+/-])/);
-        fullArray.forEach(element => {
-            if (element == "") fullArray.pop();
-        })
-
-        if (fullArray.length == 4){
-            parseArray(fullArray);
-            operate(inputsArray, fullArray);
-        }
-    }))
+       if (errorCheck == true){
+        display.textContent = "ERROR!";
+       } else if (errorCheck == false){
+            if (btn.textContent != "CE") inputsArray.push(btn.textContent);
+    
+            const fullArray = inputsArray.join("").split(/([\^=x+/-])/);
+            fullArray.forEach(element => {
+                if (element == "") fullArray.pop();
+            })
+            display.textContent = fullArray.join(" ");
+    
+            if (fullArray.length == 4){
+                parseArray(fullArray);
+                operate(inputsArray, fullArray);
+            }
+       }
+    })) 
 }
 
 calcInputs();
 
 function operate(inputsArray, fullArray){
+    let total = 0;
     if (fullArray[1] == "+"){
-        let total = fullArray[0] + fullArray[2];
+        total = fullArray[0] + fullArray[2];
         resetArrays(inputsArray, fullArray, total);
         return inputsArray;
+
     } else if (fullArray[1] == "-"){
-        let total = fullArray[0] - fullArray[2];
+        total = fullArray[0] - fullArray[2];
         resetArrays(inputsArray, fullArray, total);
         return inputsArray;
+
     } else if (fullArray[1] == "x"){
-        let total = fullArray[0] * fullArray[2];
+        total = fullArray[0] * fullArray[2];
         resetArrays(inputsArray, fullArray, total);
         return inputsArray;
+
     } else if (fullArray[1] == "/"){
-        let total = fullArray[0] / fullArray[2];
+        if (fullArray[2] == 0){
+            total = "ERROR!";
+            display.textContent = total
+            errorCheck = true;
+            return errorCheck;
+        } else {
+            let total = fullArray[0] / fullArray[2];
+            resetArrays(inputsArray, fullArray, total);
+            return inputsArray;
+        }
+
+    } else if (fullArray[1] == "^"){
+        let total = fullArray[0] ** fullArray[2];
         resetArrays(inputsArray, fullArray, total);
         return inputsArray;
     }
@@ -49,8 +75,7 @@ function parseArray(array){
         } else {
             array[i] = parseInt(array[i])
         }
-    }
-    return array;
+    } return array;
 }
 
 function resetArrays(array1, array2, total) {
