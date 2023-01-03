@@ -15,12 +15,12 @@ body {
 .display {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: flex-end;
     padding: 5px;
     height: 115px;
     background-color: azure;
-    font-size: 30px;
+    font-size: 35px;
 }
 
 .btn-container {

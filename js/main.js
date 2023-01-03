@@ -1,57 +1,55 @@
 const btns = document.querySelectorAll("button");
 const inputsArray = [];
 
-function operate(){
+function calcInputs(){
     btns.forEach(btn => btn.addEventListener("click", () => {
-        inputsArray.push((btn.textContent));
+        inputsArray.push(btn.textContent);
 
-        const operendsArray = inputsArray.join("").split(/[=x+/-]/).map(input => 
-            parseInt(input));
-        operendsArray.forEach(operend => {
-            if (isNaN(operend))operendsArray.pop();
+        const fullArray = inputsArray.join("").split(/([=x+/-])/);
+        fullArray.forEach(element => {
+            if (element == "") fullArray.pop();
         })
 
-        const operatorArray = inputsArray.filter(input => 
-            ["+","-","x","/","="].includes(input));
-
-        if (operendsArray.length == 2 && operatorArray.length == 2){ 
-            if (operatorArray[0] == "+"){
-                let total = addNums(operendsArray[0], operendsArray[1]);
-                resetArrays(inputsArray, operatorArray, total);
-            } else if (operatorArray[0] == "-"){
-                let total = subtractNums(operendsArray[0], operendsArray[1]);
-                resetArrays(inputsArray, operatorArray, total);
-            } else if (operatorArray[0] == "x"){
-                let total = multiplyNums(operendsArray[0], operendsArray[1]);
-                resetArrays(inputsArray, operatorArray, total);
-            } else if (operatorArray[0] == "/"){
-                let total = divideNums(operendsArray[0], operendsArray[1]);
-                resetArrays(inputsArray, operatorArray, total);
-            }
+        if (fullArray.length == 4){
+            parseArray(fullArray);
+            operate(inputsArray, fullArray);
         }
     }))
 }
 
-operate();
+function operate(inputsArray, fullArray){
+    if (fullArray[1] == "+"){
+        let total = fullArray[0] + fullArray[2];
+        resetArrays(inputsArray, fullArray, total);
+        return inputsArray;
+    } else if (fullArray[1] == "-"){
+        let total = fullArray[0] - fullArray[2];
+        resetArrays(inputsArray, fullArray, total);
+        return inputsArray;
+    } else if (fullArray[1] == "x"){
+        let total = fullArray[0] * fullArray[2];
+        resetArrays(inputsArray, fullArray, total);
+        return inputsArray;
+    } else if (fullArray[1] == "/"){
+        let total = fullArray[0] / fullArray[2];
+        resetArrays(inputsArray, fullArray, total);
+        return inputsArray;
+    }
+}
 
 // Helper functions
-function resetArrays(array1, array2, total){
+function parseArray(array){
+    for (let i = 0; i < array.length; i++){                
+        if (isNaN(parseInt(array[i])) == true){
+            continue
+        } else {
+            array[i] = parseInt(array[i])
+        }
+    }
+    return array;
+}
+
+function resetArrays(array1, array2, total) {
     array1.splice(0, array1.length);
-    array2[1] == "=" ? array1.push(total) : array1.push(total, array2[1]);
-}
-
-function addNums(x,y){
-    return x + y;
-}
-
-function subtractNums(x,y){
-    return x - y;
-}
-
-function divideNums(x,y){
-    return x / y;
-}
-
-function multiplyNums(x,y){
-    return x * y;
+    array2[3] == "=" ? array1.push(total.toString()) : array1.push(total.toString(), array2[3]);
 }
