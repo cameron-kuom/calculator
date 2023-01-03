@@ -1,9 +1,11 @@
 const btns = document.querySelectorAll("button");
+const display = document.querySelector(".display");
 const inputsArray = [];
 
 function calcInputs(){
     btns.forEach(btn => btn.addEventListener("click", () => {
         inputsArray.push(btn.textContent);
+        display.textContent = inputsArray.join(" ");
 
         const fullArray = inputsArray.join("").split(/([=x+/-])/);
         fullArray.forEach(element => {
@@ -16,6 +18,8 @@ function calcInputs(){
         }
     }))
 }
+
+calcInputs();
 
 function operate(inputsArray, fullArray){
     if (fullArray[1] == "+"){
@@ -51,5 +55,6 @@ function parseArray(array){
 
 function resetArrays(array1, array2, total) {
     array1.splice(0, array1.length);
-    array2[3] == "=" ? array1.push(total.toString()) : array1.push(total.toString(), array2[3]);
+    array2[3] == "=" ? array1.push(total.toString()) : array1.push(total.toString(), array2[3])
+    display.textContent = array1.join(" ");
 }
