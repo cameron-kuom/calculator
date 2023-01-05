@@ -15,7 +15,6 @@ btns[3].addEventListener("click", () => {
 })
 
 btns.forEach(btn => btn.addEventListener("click", () => {
-
 // Waits for clear button when dividing by zero occurs
     if (errorCheck == true){
     display.textContent = "ERROR!";
@@ -43,44 +42,46 @@ btns.forEach(btn => btn.addEventListener("click", () => {
             }
         }
 
+        // Inserts zero if operator is selected first
+        if (inputsArray.length > 0 && inputsArray[0].match(/[\^\√=x+/-]/)){
+                inputsArray.unshift("0")
+            }
+        
         // Stores negitive number to be called after array split
         let firstNum = Number(inputsArray[0]);
         if (firstNum < 0) inputsArray[0] = inputsArray[0].replace("-", "@");
 
-        // Converts and displays all inputs into correctlty formatted array
+        // Gets and displays formatted fullArray
         const fullArray = inputsArray.join("").split(/([\^\√=x+/-])/);
-        fullArray.forEach(element => modifyArray(fullArray, element));
+        fullArray.forEach(element => formatArray(fullArray, element));
         display.textContent = fullArray.join(" ");
 
         // Calls operate function once enough inputs are reached
         if (fullArray.length == 4 || fullArray[1] == "=" || fullArray[1] == "√"){
-            if (fullArray[0] == "") fullArray[0] = 0;
+            // if (fullArray[0] == "") fullArray[0] = 0;
             operate(inputsArray, fullArray);
         }
     }
 }))
 
 // Formats fullArray
-function modifyArray(fullArray, element){
+function formatArray(fullArray, element){
     let arrayIndex = fullArray.indexOf(element);
     fullArray[arrayIndex] = element.replace(/@/g, "-");
     if (element == "") fullArray.pop();
-    let count = 0;
+
+    let phCount = 0;
     for (let i = 0; i < element.length; i++){
         if (element.search("@") > 0){
             let removeAts = element.replace(/@/g, "");
             fullArray[arrayIndex] = "-" + removeAts;
         }
-        if (element[i] == "@") count++;
-        if (count > 1){   
+
+        if (element[i] == "@") phCount++;
+        if (phCount > 0 && phCount % 2 == 0){
             fullArray[arrayIndex] = element.replace(/@/g, "");
         }
     }
-    // if (element.startsWith(".")){
-    //     fullArray[arrayIndex] = "0" + element.slice(0);
-    // } else if (element.startsWith("@.")){
-    //     fullArray[arrayIndex] = "-0" + element.slice(1);
-    // }
 }
 
 // Calculates based on operator
@@ -91,45 +92,43 @@ function operate(inputsArray, fullArray){
     if (fullArray[1] == "="){
         total = fullArray[0];
         resetArrays(inputsArray, fullArray, total);
-        return inputsArray;
 
     } else if (fullArray[1] == "+"){
         total = fullArray[0] + fullArray[2];
         resetArrays(inputsArray, fullArray, total);
-        return inputsArray;
 
     } else if (fullArray[1] == "-"){
         total = fullArray[0] - fullArray[2];
         resetArrays(inputsArray, fullArray, total);
-        return inputsArray;
 
     } else if (fullArray[1] == "x"){
         total = fullArray[0] * fullArray[2];
         resetArrays(inputsArray, fullArray, total);
-        return inputsArray;
 
     } else if (fullArray[1] == "^"){
         total = fullArray[0] ** fullArray[2];
         resetArrays(inputsArray, fullArray, total);
-        return inputsArray;
-
-    } else if (fullArray[1] == "√"){
-        total = Math.sqrt(fullArray[0]);
-        resetArrays(inputsArray, fullArray, total);
-        return inputsArray;
 
     } else if (fullArray[1] == "/"){
         if (fullArray[2] == 0){
             total = "ERROR!";
             display.textContent = total;
             errorCheck = true;
-            return errorCheck;
         } else {
             total = fullArray[0] / fullArray[2];
             resetArrays(inputsArray, fullArray, total);
-            return inputsArray;
         }
-    }    
+
+    } else if (fullArray[1] == "√"){
+        if (fullArray[0] < 0){
+            total = "ERROR!";
+            display.textContent = total;
+            errorCheck = true;
+        } else {
+            total = Math.sqrt(fullArray[0]);
+            resetArrays(inputsArray, fullArray, total);
+        }   
+    }
 }
 
 // Helper functions
@@ -147,12 +146,14 @@ function parseArray(array){
 
 // Resets and displays new expression
 function resetArrays(array1, array2, total){
+    // Rounds number if eight decimal places is exceeded
     if (total.toString().indexOf(".") >= 0){
         let totalSplit = total.toString().split(".");
         let decimalPlaces = totalSplit[1].length;
         if (decimalPlaces >= 8) total = total.toFixed(8);
     }
 
+    // Returns and displays new inputArray values
     array1.splice(0, array1.length);
     if (array2[3] == "="){
         array1.push(total.toString())
@@ -160,7 +161,6 @@ function resetArrays(array1, array2, total){
     } else {
         array1.push(total.toString(), array2[3])
     }
-
     display.textContent = array1.join(" ");
 }
 
@@ -169,7 +169,6 @@ function placeholder(){
     if (equals == false){
         inputsArray.push("@")
     } else if (equals == true){
-        btns
         inputsArray.shift();
         inputsArray.push("@")
     }
