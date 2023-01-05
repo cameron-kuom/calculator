@@ -27,7 +27,7 @@ btns.forEach(btn => btn.addEventListener("click", () => {
             if (equals == true){
                 if (isNaN(parseFloat(btn.textContent)) == false){
                     if (inputsArray[0] == "@"){
-                        inputsArray[0] = "@" + btn.textContent
+                        inputsArray[0] = "@" + btn.textContent;
                     } else {
                         inputsArray.shift();
                         inputsArray.push(btn.textContent);
@@ -44,7 +44,7 @@ btns.forEach(btn => btn.addEventListener("click", () => {
 
         // Inserts zero if operator is selected first
         if (inputsArray.length > 0 && inputsArray[0].match(/[\^\√=x+/-]/)){
-                inputsArray.unshift("0")
+                inputsArray.unshift("0");
             }
         
         // Stores negitive number to be called after array split
@@ -58,7 +58,6 @@ btns.forEach(btn => btn.addEventListener("click", () => {
 
         // Calls operate function once enough inputs are reached
         if (fullArray.length == 4 || fullArray[1] == "=" || fullArray[1] == "√"){
-            // if (fullArray[0] == "") fullArray[0] = 0;
             operate(inputsArray, fullArray);
         }
     }
@@ -84,6 +83,14 @@ function formatArray(fullArray, element){
     if (phCount > 0 && phCount % 2 == 0){
         fullArray[arrayIndex] = element.replace(/@/g, "");
         phCount = 0;
+    }
+
+    // Limits one decimal per operend
+    let decIndex = element.indexOf(".");
+    let beforeDec = element.slice(0, decIndex + 1);
+    let afterDec = element.slice(decIndex + 1);
+    if (afterDec.includes(".") == true){
+        fullArray[arrayIndex] = beforeDec + afterDec.replaceAll(".", "");
     }
 }
 
@@ -140,9 +147,9 @@ function operate(inputsArray, fullArray){
 function parseArray(array){
     for (let i = 0; i < array.length; i++){                
         if (isNaN(parseFloat(array[i])) == true){
-            continue
+            continue;
         } else {
-            array[i] = parseFloat(array[i])
+            array[i] = parseFloat(array[i]);
         }
     } return array;
 }
@@ -152,24 +159,24 @@ function resetArrays(array1, array2, total){
     // Safeguard if total equals NaN
     if (isNaN(total)){
         total = "ERROR!";
-            display.textContent = total;
-            errorCheck = true;
+        display.textContent = total;
+        errorCheck = true;
     }
 
     // Rounds number if eight decimal places is exceeded
     if (total.toString().indexOf(".") >= 0){
         let totalSplit = total.toString().split(".");
-        let decimalPlaces = totalSplit[1].length;
-        if (decimalPlaces >= 8) total = total.toFixed(8);
+        let decPlaces = totalSplit[1].length;
+        if (decPlaces >= 6) total = total.toFixed(6);
     }
 
     // Returns and displays new inputArray values
     array1.splice(0, array1.length);
     if (array2[3] == "="){
-        array1.push(total.toString())
+        array1.push(total.toString());
         equals = true;
     } else {
-        array1.push(total.toString(), array2[3])
+        array1.push(total.toString(), array2[3]);
     }
     display.textContent = array1.join(" ");
 }
@@ -180,6 +187,6 @@ function placeholder(){
         inputsArray.push("@")
     } else if (equals == true){
         inputsArray.shift();
-        inputsArray.push("@")
+        inputsArray.push("@");
     }
 }
