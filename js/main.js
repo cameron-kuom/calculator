@@ -67,20 +67,23 @@ btns.forEach(btn => btn.addEventListener("click", () => {
 // Formats fullArray
 function formatArray(fullArray, element){
     let arrayIndex = fullArray.indexOf(element);
+    let phCount = 0;
     fullArray[arrayIndex] = element.replace(/@/g, "-");
     if (element == "") fullArray.pop();
+    if (fullArray[0] == "-" && fullArray[1] == "^") fullArray[0] = "-0";
 
-    let phCount = 0;
     for (let i = 0; i < element.length; i++){
+        if (element[i] == "@") phCount++;
+
         if (element.search("@") > 0){
             let removeAts = element.replace(/@/g, "");
             fullArray[arrayIndex] = "-" + removeAts;
         }
+    }
 
-        if (element[i] == "@") phCount++;
-        if (phCount > 0 && phCount % 2 == 0){
-            fullArray[arrayIndex] = element.replace(/@/g, "");
-        }
+    if (phCount > 0 && phCount % 2 == 0){
+        fullArray[arrayIndex] = element.replace(/@/g, "");
+        phCount = 0;
     }
 }
 
@@ -120,7 +123,7 @@ function operate(inputsArray, fullArray){
         }
 
     } else if (fullArray[1] == "√"){
-        if (fullArray[0] < 0){
+        if (fullArray[0] < 0 || fullArray[0] == "-"){
             total = "ERROR!";
             display.textContent = total;
             errorCheck = true;
@@ -146,6 +149,13 @@ function parseArray(array){
 
 // Resets and displays new expression
 function resetArrays(array1, array2, total){
+    // Safeguard if total equals NaN
+    if (isNaN(total)){
+        total = "ERROR!";
+            display.textContent = total;
+            errorCheck = true;
+    }
+
     // Rounds number if eight decimal places is exceeded
     if (total.toString().indexOf(".") >= 0){
         let totalSplit = total.toString().split(".");
